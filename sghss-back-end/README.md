@@ -61,4 +61,12 @@ Este projeto está disponível em:
 Gabriel Sponton Beretta
 RU: 4573718
 
+## Como Executar
+
+```bash
+# Instalar dependências
+pip install -r requirements.txt
+
+# Executar o servidor
+python src/app.py
 

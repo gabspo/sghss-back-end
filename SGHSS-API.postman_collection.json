@@ -1,0 +1,939 @@
+{
+  "info": {
+    "name": "SGHSS API - Collection Completa",
+    "description": "Collection com todos os endpoints da API SGHSS para testes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔐 AUTENTICAÇÃO",
+      "description": "Endpoints de autenticação e autorização",
+      "item": [
+        {
+          "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code é 200', function() {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/auth/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "auth", "health"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "  pm.environment.set('token', jsonData.data.token);",
+                  "  pm.test('Token salvo na variável de ambiente', function() {",
+                  "    pm.expect(pm.environment.get('token')).to.exist;",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@sghss.com\",\n  \"senha\": \"sua_senha_aqui\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Faz login e retorna um token JWT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "👥 USUÁRIOS",
+      "description": "CRUD de usuários",
+      "item": [
+        {
+          "name": "Listar todos os usuários",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/usuarios?page=1&per_page=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "usuarios"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obter usuário por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/usuarios/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "usuarios", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar novo usuário",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Novo Usuário\",\n  \"email\": \"novo@example.com\",\n  \"senha\": \"Senha123!@#\",\n  \"tipo\": \"paciente\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/usuarios",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "usuarios"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar usuário",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Nome Atualizado\",\n  \"email\": \"atualizado@example.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/usuarios/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "usuarios", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar usuário",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/usuarios/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "usuarios", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏥 PACIENTES",
+      "description": "CRUD de pacientes",
+      "item": [
+        {
+          "name": "Listar todos os pacientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/pacientes?page=1&per_page=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "pacientes"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obter paciente por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/pacientes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "pacientes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar novo paciente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario_id\": 3,\n  \"cpf\": \"12345678901234\",\n  \"data_nascimento\": \"1990-01-01\",\n  \"telefone\": \"(11) 99999-9999\",\n  \"endereco\": \"Rua Teste, 123\",\n  \"cidade\": \"São Paulo\",\n  \"estado\": \"SP\",\n  \"cep\": \"01234-567\",\n  \"condicoes_medicas\": \"Hipertensão\",\n  \"alergias\": \"Penicilina\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/pacientes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "pacientes"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar paciente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefone\": \"(11) 98888-8888\",\n  \"condicoes_medicas\": \"Hipertensão, Diabetes\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/pacientes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "pacientes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar paciente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/pacientes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "pacientes", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👨‍⚕️ PROFISSIONAIS",
+      "description": "CRUD de profissionais de saúde",
+      "item": [
+        {
+          "name": "Listar todos os profissionais",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/profissionais?page=1&per_page=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "profissionais"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obter profissional por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/profissionais/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "profissionais", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar novo profissional",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario_id\": 2,\n  \"crm\": \"123456/SP\",\n  \"especialidade\": \"Cardiologia\",\n  \"telefone_comercial\": \"(11) 98765-4321\",\n  \"endereco_consultorio\": \"Rua das Flores, 123\",\n  \"cidade\": \"São Paulo\",\n  \"estado\": \"SP\",\n  \"cep\": \"01234-567\",\n  \"horario_inicio\": \"08:00:00\",\n  \"horario_fim\": \"18:00:00\",\n  \"dias_atendimento\": \"Segunda a Sexta\",\n  \"biografia\": \"Médico especialista em cardiologia com 10 anos de experiência\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/profissionais",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "profissionais"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar profissional",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"especialidade\": \"Cardiologia e Hematologia\",\n  \"telefone_comercial\": \"(11) 97777-7777\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/profissionais/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "profissionais", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar profissional",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/profissionais/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "profissionais", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💊 MEDICAMENTOS",
+      "description": "CRUD de medicamentos",
+      "item": [
+        {
+          "name": "Listar todos os medicamentos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/medicamentos?page=1&per_page=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "medicamentos"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar medicamento por nome",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/medicamentos/busca?busca=dipirona",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "medicamentos", "busca"],
+              "query": [
+                {
+                  "key": "busca",
+                  "value": "dipirona"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obter medicamento por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/medicamentos/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "medicamentos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar novo medicamento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Antibiótico XYZ\",\n  \"principio_ativo\": \"Substância Ativa ABC\",\n  \"fabricante\": \"Laboratorios Teste\",\n  \"dosagem\": \"500mg\",\n  \"forma_farmaceutica\": \"Comprimido\",\n  \"lote\": \"LT123456\",\n  \"validade\": \"2025-12-31\",\n  \"preco\": 45.50,\n  \"estoque\": 100,\n  \"descricao\": \"Medicamento para tratamento de infecções\",\n  \"contraindicacoes\": \"Alergia ao princípio ativo\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/medicamentos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "medicamentos"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar medicamento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estoque\": 150,\n  \"preco\": 42.00\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/medicamentos/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "medicamentos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar medicamento",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/medicamentos/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "medicamentos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📅 CONSULTAS",
+      "description": "CRUD de consultas e agendamentos",
+      "item": [
+        {
+          "name": "Listar todas as consultas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/consultas?page=1&per_page=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "consultas"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar consultas por paciente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/consultas?paciente_id=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "consultas"],
+              "query": [
+                {
+                  "key": "paciente_id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obter consulta por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/consultas/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "consultas", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar nova consulta (Presencial)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente_id\": 1,\n  \"profissional_id\": 1,\n  \"tipo\": \"presencial\",\n  \"data_hora\": \"2025-11-20 14:30:00\",\n  \"duracao_minutos\": 30,\n  \"motivo_consulta\": \"Consulta de rotina\",\n  \"sintomas\": \"Sem sintomas aparentes\",\n  \"status\": \"agendada\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/consultas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "consultas"]
+            }
+          }
+        },
+        {
+          "name": "Criar nova consulta (Telemedicina)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente_id\": 1,\n  \"profissional_id\": 1,\n  \"tipo\": \"telemedicina\",\n  \"data_hora\": \"2025-11-20 15:00:00\",\n  \"duracao_minutos\": 30,\n  \"motivo_consulta\": \"Consulta online\",\n  \"link_video\": \"https://zoom.us/j/123456789\",\n  \"status\": \"agendada\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/consultas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "consultas"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar consulta",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"realizada\",\n  \"diagnostico\": \"Paciente em perfeitas condições de saúde\",\n  \"observacoes\": \"Retorno em 3 meses\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/consultas/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "consultas", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar consulta",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/consultas/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "consultas", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📋 PRESCRIÇÕES",
+      "description": "CRUD de prescrições de medicamentos",
+      "item": [
+        {
+          "name": "Listar todas as prescrições",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/prescricoes?page=1&per_page=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "prescricoes"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Prescrições de uma consulta",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/prescricoes/consulta/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "prescricoes", "consulta", "1"]
+            }
+          }
+        },
+        {
+          "name": "Obter prescrição por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/prescricoes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "prescricoes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar nova prescrição",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"consulta_id\": 1,\n  \"medicamento_id\": 1,\n  \"profissional_id\": 1,\n  \"dosagem\": \"500mg\",\n  \"frequencia\": \"3x ao dia\",\n  \"duracao_dias\": 7,\n  \"data_inicio\": \"2025-11-13\",\n  \"data_fim\": \"2025-11-20\",\n  \"instrucoes_uso\": \"Tomar com água durante as refeições\",\n  \"observacoes\": \"Não misturar com álcool\",\n  \"ativa\": true\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/prescricoes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "prescricoes"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar prescrição",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dosagem\": \"250mg\",\n  \"frequencia\": \"2x ao dia\",\n  \"ativa\": false\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/prescricoes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "prescricoes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar prescrição",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/prescricoes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "prescricoes", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

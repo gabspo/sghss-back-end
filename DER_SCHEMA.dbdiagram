@@ -1,0 +1,134 @@
+Table usuarios {
+  id int [pk, increment]
+  nome varchar(255) [not null]
+  email varchar(255) [not null, unique]
+  senha varchar(255) [not null]
+  tipo enum [not null, default: 'paciente', note: 'admin, medico, paciente, secretaria']
+  ativo boolean [default: true]
+  criado_em timestamp [default: 'CURRENT_TIMESTAMP']
+  atualizado_em timestamp [default: 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+  
+  indexes {
+    email
+    tipo
+    ativo
+  }
+}
+
+Table pacientes {
+  id int [pk, increment]
+  usuario_id int [not null, unique, ref: - usuarios.id]
+  cpf varchar(14) [not null, unique]
+  data_nascimento date
+  telefone varchar(20)
+  endereco varchar(500)
+  cidade varchar(100)
+  estado varchar(2)
+  cep varchar(9)
+  condicoes_medicas text
+  alergias text
+  criado_em timestamp [default: 'CURRENT_TIMESTAMP']
+  atualizado_em timestamp [default: 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+  
+  indexes {
+    cpf
+    usuario_id
+  }
+}
+
+Table profissionais {
+  id int [pk, increment]
+  usuario_id int [not null, unique, ref: - usuarios.id]
+  crm varchar(20) [not null, unique]
+  especialidade varchar(100) [not null]
+  telefone_comercial varchar(20)
+  endereco_consultorio varchar(500)
+  cidade varchar(100)
+  estado varchar(2)
+  cep varchar(9)
+  horario_inicio time
+  horario_fim time
+  dias_atendimento varchar(100)
+  biografia text
+  criado_em timestamp [default: 'CURRENT_TIMESTAMP']
+  atualizado_em timestamp [default: 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+  
+  indexes {
+    crm
+    especialidade
+    usuario_id
+  }
+}
+
+Table medicamentos {
+  id int [pk, increment]
+  nome varchar(255) [not null]
+  principio_ativo varchar(255) [not null]
+  fabricante varchar(255)
+  dosagem varchar(100)
+  forma_farmaceutica varchar(100)
+  lote varchar(50)
+  validade date
+  preco decimal(10, 2)
+  estoque int [default: 0]
+  descricao text
+  contraindicacoes text
+  criado_em timestamp [default: 'CURRENT_TIMESTAMP']
+  atualizado_em timestamp [default: 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+  
+  indexes {
+    nome
+    principio_ativo
+    lote
+  }
+}
+
+Table consultas {
+  id int [pk, increment]
+  paciente_id int [not null, ref: > pacientes.id]
+  profissional_id int [not null, ref: > profissionais.id]
+  tipo enum [not null, default: 'presencial', note: 'presencial, telemedicina']
+  data_hora datetime [not null]
+  duracao_minutos int [default: 30]
+  motivo_consulta varchar(500)
+  sintomas text
+  diagnostico text
+  observacoes text
+  link_video varchar(500)
+  status enum [not null, default: 'agendada', note: 'agendada, realizada, cancelada, nao_compareceu']
+  criado_em timestamp [default: 'CURRENT_TIMESTAMP']
+  atualizado_em timestamp [default: 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+  
+  indexes {
+    paciente_id
+    profissional_id
+    data_hora
+    status
+    tipo
+  }
+}
+
+Table prescricoes {
+  id int [pk, increment]
+  consulta_id int [not null, ref: > consultas.id]
+  medicamento_id int [not null, ref: > medicamentos.id]
+  profissional_id int [not null, ref: > profissionais.id]
+  dosagem varchar(100) [not null]
+  frequencia varchar(100) [not null]
+  duracao_dias int [not null]
+  data_inicio date [not null]
+  data_fim date [not null]
+  instrucoes_uso text
+  observacoes text
+  ativa boolean [default: true]
+  criado_em timestamp [default: 'CURRENT_TIMESTAMP']
+  atualizado_em timestamp [default: 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+  
+  indexes {
+    consulta_id
+    medicamento_id
+    profissional_id
+    ativa
+    data_inicio
+  }
+}

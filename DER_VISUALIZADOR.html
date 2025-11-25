@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DER - SGHSS Sistema de Gestão em Saúde e Telemedicina</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .diagram-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+            border: 2px solid #e0e0e0;
+        }
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .legend-item {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .legend-item h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 1.1em;
+        }
+        .legend-item ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .legend-item ul li {
+            margin: 5px 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .badge-pk { background: #4CAF50; color: white; }
+        .badge-fk { background: #2196F3; color: white; }
+        .badge-unique { background: #FF9800; color: white; }
+        .export-buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .btn {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #764ba2;
+        }
+        .btn-secondary {
+            background: #666;
+        }
+        .btn-secondary:hover {
+            background: #333;
+        }
+        mermaid {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ Diagrama Entidade-Relacionamento (DER)</h1>
+        <p class="subtitle">SGHSS - Sistema de Gestão de Saúde e Segurança em Telemedicina</p>
+        
+        <div class="diagram-container">
+            <mermaid>
+erDiagram
+    USUARIOS ||--o{ PACIENTES : "1:1"
+    USUARIOS ||--o{ PROFISSIONAIS : "1:1"
+    PACIENTES ||--o{ CONSULTAS : "1:N"
+    PROFISSIONAIS ||--o{ CONSULTAS : "1:N"
+    CONSULTAS ||--o{ PRESCRICOES : "1:N"
+    MEDICAMENTOS ||--o{ PRESCRICOES : "N:1"
+    PROFISSIONAIS ||--o{ PRESCRICOES : "N:1"
+
+    USUARIOS {
+        int id PK
+        string nome
+        string email UK
+        string senha
+        enum tipo
+        boolean ativo
+        timestamp criado_em
+        timestamp atualizado_em
+    }
+
+    PACIENTES {
+        int id PK
+        int usuario_id FK
+        string cpf UK
+        date data_nascimento
+        string telefone
+        string endereco
+        string cidade
+        string estado
+        string cep
+        text condicoes_medicas
+        text alergias
+        timestamp criado_em
+        timestamp atualizado_em
+    }
+
+    PROFISSIONAIS {
+        int id PK
+        int usuario_id FK
+        string crm UK
+        string especialidade
+        string telefone_comercial
+        string endereco_consultorio
+        string cidade
+        string estado
+        string cep
+        time horario_inicio
+        time horario_fim
+        string dias_atendimento
+        text biografia
+        timestamp criado_em
+        timestamp atualizado_em
+    }
+
+    CONSULTAS {
+        int id PK
+        int paciente_id FK
+        int profissional_id FK
+        enum tipo
+        datetime data_hora
+        int duracao_minutos
+        string motivo_consulta
+        text sintomas
+        text diagnostico
+        text observacoes
+        string link_video
+        enum status
+        timestamp criado_em
+        timestamp atualizado_em
+    }
+
+    MEDICAMENTOS {
+        int id PK
+        string nome
+        string principio_ativo
+        string fabricante
+        string dosagem
+        string forma_farmaceutica
+        string lote
+        date validade
+        decimal preco
+        int estoque
+        text descricao
+        text contraindicacoes
+        timestamp criado_em
+        timestamp atualizado_em
+    }
+
+    PRESCRICOES {
+        int id PK
+        int consulta_id FK
+        int medicamento_id FK
+        int profissional_id FK
+        string dosagem
+        string frequencia
+        int duracao_dias
+        date data_inicio
+        date data_fim
+        text instrucoes_uso
+        text observacoes
+        boolean ativa
+        timestamp criado_em
+        timestamp atualizado_em
+    }
+            </mermaid>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <h3>👥 Tabela: USUARIOS</h3>
+                <ul>
+                    <li><span class="badge badge-pk">PK</span> id - Identificador único</li>
+                    <li>nome - Nome completo</li>
+                    <li><span class="badge badge-unique">UK</span> email - Email único</li>
+                    <li>tipo - admin, medico, paciente, secretaria</li>
+                    <li>ativo - Status do usuário</li>
+                </ul>
+            </div>
+
+            <div class="legend-item">
+                <h3>🏥 Tabela: PACIENTES</h3>
+                <ul>
+                    <li><span class="badge badge-pk">PK</span> id - Identificador</li>
+                    <li><span class="badge badge-fk">FK</span> usuario_id - Referência a usuários</li>
+                    <li><span class="badge badge-unique">UK</span> cpf - CPF único</li>
+                    <li>data_nascimento - Data de nascimento</li>
+                    <li>condicoes_medicas - Histórico</li>
+                    <li>alergias - Alergias conhecidas</li>
+                </ul>
+            </div>
+
+            <div class="legend-item">
+                <h3>👨‍⚕️ Tabela: PROFISSIONAIS</h3>
+                <ul>
+                    <li><span class="badge badge-pk">PK</span> id - Identificador</li>
+                    <li><span class="badge badge-fk">FK</span> usuario_id - Referência a usuários</li>
+                    <li><span class="badge badge-unique">UK</span> crm - CRM único</li>
+                    <li>especialidade - Área de atuação</li>
+                    <li>horario_inicio/fim - Horário de atendimento</li>
+                </ul>
+            </div>
+
+            <div class="legend-item">
+                <h3>📅 Tabela: CONSULTAS</h3>
+                <ul>
+                    <li><span class="badge badge-pk">PK</span> id - Identificador</li>
+                    <li><span class="badge badge-fk">FK</span> paciente_id - Referência</li>
+                    <li><span class="badge badge-fk">FK</span> profissional_id - Referência</li>
+                    <li>tipo - presencial ou telemedicina</li>
+                    <li>status - agendada, realizada, cancelada, nao_compareceu</li>
+                    <li>link_video - Para telemedicina</li>
+                </ul>
+            </div>
+
+            <div class="legend-item">
+                <h3>💊 Tabela: MEDICAMENTOS</h3>
+                <ul>
+                    <li><span class="badge badge-pk">PK</span> id - Identificador</li>
+                    <li>nome - Nome do medicamento</li>
+                    <li>principio_ativo - Substância ativa</li>
+                    <li>dosagem - Dose apresentada</li>
+                    <li>estoque - Quantidade em estoque</li>
+                    <li>preco - Valor unitário</li>
+                </ul>
+            </div>
+
+            <div class="legend-item">
+                <h3>📋 Tabela: PRESCRICOES</h3>
+                <ul>
+                    <li><span class="badge badge-pk">PK</span> id - Identificador</li>
+                    <li><span class="badge badge-fk">FK</span> consulta_id - Referência</li>
+                    <li><span class="badge badge-fk">FK</span> medicamento_id - Referência</li>
+                    <li><span class="badge badge-fk">FK</span> profissional_id - Referência</li>
+                    <li>dosagem - Como tomar</li>
+                    <li>frequencia - Quantas vezes por dia</li>
+                    <li>duracao_dias - Duração do tratamento</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="export-buttons">
+            <h2>💾 Exportar Diagrama</h2>
+            <button class="btn" onclick="exportarPNG()">📥 Baixar como PNG</button>
+            <button class="btn btn-secondary" onclick="exportarPDF()">📥 Baixar como PDF</button>
+            <button class="btn btn-secondary" onclick="exportarSVG()">📥 Baixar como SVG</button>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+        mermaid.contentLoaded();
+
+        async function exportarPNG() {
+            const svgElement = document.querySelector('svg');
+            if (!svgElement) {
+                alert('Aguarde o diagrama carregar completamente');
+                return;
+            }
+            
+            const canvas = await html2canvas(svgElement);
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL();
+            link.download = 'DER_SGHSS.png';
+            link.click();
+        }
+
+        function exportarPDF() {
+            window.print();
+        }
+
+        function exportarSVG() {
+            const svgElement = document.querySelector('svg');
+            if (!svgElement) {
+                alert('Aguarde o diagrama carregar completamente');
+                return;
+            }
+            
+            const serializer = new XMLSerializer();
+            const svgString = serializer.serializeToString(svgElement);
+            const blob = new Blob([svgString], { type: 'image/svg+xml' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'DER_SGHSS.svg';
+            link.click();
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>

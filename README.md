@@ -1,218 +1,120 @@
-# SGHSS - Sistema de Gestão de Saúde e Segurança em Telemedicina
+# SGHSS — Sistema de Gestão de Saúde e Segurança em Telemedicina
 
-Sistema backend desenvolvido com Flask para gerenciar consultas, pacientes, profissionais de saúde e telemedicina.
+Resumo
+-------
+O repositório contém a implementação de um serviço backend desenvolvido em Python com o microframework Flask. O sistema provê APIs REST para gestão de pacientes, profissionais de saúde, agendamentos de consultas e funcionalidades iniciais de telemedicina.
 
-## 📋 Estrutura do Projeto
+Estrutura do repositório
+------------------------
+O projeto segue uma organização em camadas para separar responsabilidades. A árvore principal de diretórios é a seguinte:
 
 ```
 sghss-back-end/
 ├── src/
-│   ├── __init__.py           # Aplicação principal
-│   ├── config/               # Configurações da aplicação
-│   │   ├── settings.py       # Configurações por ambiente
-│   │   ├── database.py       # Gerenciador de conexão com banco de dados
-│   ├── models/               # Modelos de dados
-│   ├── services/             # Lógica de negócio
-│   │   ├── usuario_service.py
-│   │   ├── paciente_service.py
-│   │   └── ...
-│   ├── routes/               # Rotas/Endpoints da API
-│   │   ├── auth.py
-│   │   ├── usuarios.py
-│   │   ├── pacientes.py
-│   │   └── ...
-│   ├── utils/                # Utilitários
-│   │   ├── logging.py        # Configuração de logs
-│   │   ├── validators.py     # Validadores
-│   │   └── response.py       # Formatadores de resposta
-│   ├── exceptions/           # Exceções customizadas
-│
-├── tests/                    # Testes unitários e de integração
-├── app.py                    # Ponto de entrada da aplicação
-├── requirements.txt          # Dependências do projeto
-├── .env.example              # Variáveis de ambiente (exemplo)
-└── README.md                 # Este arquivo
+│   ├── __init__.py
+│   ├── config/
+│   │   ├── settings.py
+│   │   └── database.py
+│   ├── models/
+│   ├── services/
+│   ├── routes/
+│   ├── utils/
+│   └── exceptions/
+├── tests/
+├── app.py
+├── requirements.txt
+├── .env.example
+└── README.md
 ```
 
-## 🚀 Iniciando o Projeto
+Instalação e execução
+---------------------
+1. Instalar dependências:
 
-### 1. Instalação de Dependências
-
-```bash
+```powershell
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 2. Configuração do Ambiente
+2. Configurar variáveis de ambiente: copiar o arquivo de exemplo e ajustar os valores conforme o ambiente.
 
-Crie um arquivo `.env` na raiz do projeto, baseado em `.env.example`:
-
-```bash
-cp .env.example .env
+```powershell
+copy .env.example .env
 ```
 
-Edite o arquivo `.env` com suas configurações:
+Edite o `.env` para definir as informações de conexão com o banco de dados e chaves de segurança.
 
-```env
-# Database
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=sua_senha
-DB_DATABASE=sghss_db
-DB_PORT=3306
+3. Inicializar o banco de dados:
 
-# Flask
-FLASK_ENV=development
-FLASK_DEBUG=True
-SECRET_KEY=sua-chave-secreta-segura
+Executar o script SQL disponível no repositório (`DATABASE_INIT.sql`) em uma instância MySQL apropriada para desenvolvimento.
 
-# JWT
-JWT_SECRET_KEY=sua-chave-jwt-segura
-JWT_ACCESS_TOKEN_EXPIRES=18000
+4. Executar a aplicação:
 
-# Application
-APP_HOST=0.0.0.0
-APP_PORT=5000
-```
-
-### 3. Inicializar Banco de Dados
-
-```bash
-# Criar tabelas no banco de dados
-# (Adicione um script SQL com as tabelas necessárias)
-```
-
-### 4. Executar a Aplicação
-
-```bash
+```powershell
 python app.py
 ```
 
-A aplicação estará disponível em: `http://localhost:5000`
+Após a inicialização, a API estará disponível em `http://localhost:5000`.
 
-## 📚 Boas Práticas Implementadas
+Arquitetura e principais decisões de projeto
+-------------------------------------------
+- Aplicação configurada a partir de uma fábrica (`create_app`) para permitir múltiplos ambientes (desenvolvimento, teste, produção).
+- Separação em camadas: rotas expõem endpoints HTTP; serviços encapsulam regras de negócio; modelos representam entidades e mapeamento com o banco.
+- Autenticação baseada em tokens JWT para rotas que exigem autenticação.
+- Configurações sensíveis são externalizadas via variáveis de ambiente.
 
-### 1. **Arquitetura em Camadas**
-- **Config**: Gerenciamento de configurações e banco de dados
-- **Models**: Definição de modelos de dados
-- **Services**: Lógica de negócio isolada das rotas
-- **Routes**: Endpoints da API
-- **Utils**: Funções auxiliares reutilizáveis
-- **Exceptions**: Exceções customizadas da aplicação
+Tratamento de erros e logging
+-----------------------------
+- A aplicação centraliza tratamento de exceções por meio de handlers específicos, retornando respostas HTTP padronizadas.
+- Logging configurado para registrar eventos em console e em arquivos com rotação.
 
-### 2. **Separação de Responsabilidades**
-Cada camada tem uma responsabilidade bem definida:
-- Rotas: Validação de entrada e formatação de resposta
-- Services: Lógica de negócio e operações com banco de dados
-- Utils: Funções auxiliares genéricas
-- Exceptions: Tratamento de erros específicos
+Qualidade e testes
+------------------
+- A base do projeto inclui exemplos de testes (pytest). Recomenda-se a execução periódica da suíte de testes durante o desenvolvimento e a integração de um pipeline de CI para automatizar validações.
 
-### 3. **Tratamento de Erros**
-- Exceções customizadas para diferentes cenários
-- Handlers globais de erros na aplicação
-- Mensagens de erro consistentes e informativas
+Documentação da API
+-------------------
+- Uma especificação OpenAPI (3.0) para os principais endpoints foi adicionada em `docs/openapi.yaml`.
+- Um mecanismo de documentação interativa (Swagger UI) pode ser ativado utilizando a biblioteca `flasgger` e apontando o template para `docs/openapi.yaml`.
 
-### 4. **Logging**
-- Configuração centralizada de logs
-- Logs em console e arquivo
-- Rotação automática de arquivos de log
+Reprodutibilidade
+-----------------
+- Para reproduzir o ambiente de desenvolvimento recomenda-se o uso de contêineres (Docker) e de um arquivo `docker-compose` que inclua a aplicação e uma instância MariaDB/MySQL. Esse artefato não está incluído no repositório e pode ser adicionado conforme necessidade.
 
-### 5. **Validação de Dados**
-- Classe `Validator` com métodos reutilizáveis
-- Validação de email, senha, telefone, data, etc.
-- Validação de campos obrigatórios
+Segurança e conformidade
+------------------------
+- Senhas devem ser armazenadas de forma segura (hashing apropriado).
+- Não versionar arquivos com segredos (`.env` contendo valores reais).
+- Dados sensíveis (por exemplo, CPF ou prontuário) requerem políticas de proteção, pseudonimização e retenção compatíveis com a legislação aplicável.
 
-### 6. **Segurança**
-- Senhas com hash usando werkzeug
-- JWT para autenticação
-- Variáveis de ambiente para credenciais sensíveis
-- Proteção com `@jwt_required()` em rotas
+Dependências principais
+-----------------------
+- Flask
+- Flask-JWT-Extended
+- mysql-connector-python
+- python-dotenv
 
-### 7. **Resposta Padronizada**
-- Classe `ResponseFormatter` para formatar respostas
-- Respostas de sucesso e erro consistentes
-- Paginação integrada
+Execução de testes
+------------------
+Executar a suíte de testes com:
 
-### 8. **Gerenciamento de Banco de Dados**
-- Classe `DatabaseManager` com context managers
-- Conexões automáticas fechadas
-- Tratamento de erros de conexão
-
-### 9. **Documentação**
-- Docstrings em todas as funções
-- Type hints para melhor IDE support
-- Comentários explicativos
-
-### 10. **Configuração por Ambiente**
-- Desenvolvimento, produção e teste
-- Variáveis de ambiente para segurança
-- Fácil switch entre ambientes
-
-## 🔗 Endpoints da API
-
-### Autenticação
-- `POST /api/auth/login` - Login do usuário
-- `GET /api/auth/health` - Health check
-
-### Usuários
-- `POST /api/usuarios` - Criar usuário
-- `GET /api/usuarios` - Listar usuários
-- `GET /api/usuarios/<id>` - Obter usuário
-- `PUT /api/usuarios/<id>` - Atualizar usuário
-- `DELETE /api/usuarios/<id>` - Deletar usuário
-
-### Pacientes
-- `POST /api/pacientes` - Criar paciente
-- `GET /api/pacientes` - Listar pacientes
-- `GET /api/pacientes/<id>` - Obter paciente
-- `PUT /api/pacientes/<id>` - Atualizar paciente
-- `DELETE /api/pacientes/<id>` - Deletar paciente
-
-## 🧪 Testes
-
-Execute os testes com:
-
-```bash
+```powershell
 pytest tests/
 ```
 
-## 📝 Padrões de Codificação
+Padronização de código
+----------------------
+- Convenções de nomenclatura: `snake_case` para variáveis e funções; `PascalCase` para classes.
+- Recomenda-se uso de ferramentas de lint (por exemplo, `flake8`) e de tipagem estática quando aplicável.
 
-- **Nomes de variáveis**: snake_case
-- **Nomes de funções**: snake_case
-- **Nomes de classes**: PascalCase
-- **Constantes**: UPPER_SNAKE_CASE
-- **Imports**: Organizados em ordem (stdlib, third-party, local)
+Contribuição
+------------
+Contribuições devem seguir as diretrizes de revisão e incluir testes que cobrem alterações funcionais relevantes. Atualize a documentação associada quando o comportamento da API for alterado.
 
-## 🔒 Segurança
-
-Sempre lembre-se de:
-1. Nunca commitar arquivos `.env` com credenciais reais
-2. Usar HTTPS em produção
-3. Validar e sanitizar todas as entradas
-4. Manter dependências atualizadas
-5. Usar CORS apropriado para frontend
-
-## 📦 Dependências Principais
-
-- **Flask**: Framework web
-- **Flask-JWT-Extended**: Autenticação JWT
-- **mysql-connector-python**: Driver MySQL
-- **python-dotenv**: Gerenciamento de variáveis de ambiente
-- **Werkzeug**: Utilidades para segurança
-
-## 🤝 Contribuindo
-
-Ao adicionar novo código:
-1. Siga os padrões estabelecidos
-2. Adicione docstrings em todas as funções
-3. Use type hints
-4. Adicione testes unitários
-5. Atualize a documentação
-
-## 📄 Licença
-
+Licença
+-------
 MIT License
 
-## ✉️ Contato
-
-Para dúvidas ou sugestões, entre em contato com o time de desenvolvimento.
+Contato
+-------
+Removido conforme solicitado.

@@ -81,11 +81,9 @@ Reprodutibilidade
 -----------------
 - Para reproduzir o ambiente de desenvolvimento recomenda-se o uso de contêineres (Docker) e de um arquivo `docker-compose` que inclua a aplicação e uma instância MariaDB/MySQL. Esse artefato não está incluído no repositório e pode ser adicionado conforme necessidade.
 
-Segurança e conformidade
+Segurança
 ------------------------
-- Senhas devem ser armazenadas de forma segura (hashing apropriado).
-- Não versionar arquivos com segredos (`.env` contendo valores reais).
-- Dados sensíveis (por exemplo, CPF ou prontuário) requerem políticas de proteção, pseudonimização e retenção compatíveis com a legislação aplicável.
+- - O uso de Flask-JWT-Extended e Werkzeug reforça a segurança na autenticação e armazenamento de senhas.
 
 Dependências principais
 -----------------------
@@ -110,11 +108,3 @@ Padronização de código
 Contribuição
 ------------
 Contribuições devem seguir as diretrizes de revisão e incluir testes que cobrem alterações funcionais relevantes. Atualize a documentação associada quando o comportamento da API for alterado.
-
-Licença
--------
-MIT License
-
-Contato
--------
-Removido conforme solicitado.
